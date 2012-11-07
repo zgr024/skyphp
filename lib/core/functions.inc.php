@@ -886,7 +886,7 @@ function collection( $model, $clause, $duration=null ) {
 				if ($access_needed_arr[0] == '*') {
 					$access_needed_arr = array();
 				}
-				if ($_GET['key']) echo $key_table;
+
 				$aql = 	" $key_table { id, access_group } ";
 				$rs = aql::select($aql, array(
 					'where' => $where,
