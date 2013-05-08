@@ -28,7 +28,7 @@ if ( $template_area == 'top' ) {
 
     <title><?=$this->title?></title>
 
-    <meta name="viewport" content="width=1000, initial-scale=0.2, user-scalable=1" />
+    <meta meta name="viewport" content="initial-scale=.3,maximum-scale=1.0,minimum-scale=0.1, height=device-height, width=device-width, target-densityDpi=device-dpi" />
 <?php
 
     $meta_content = $this->seoMetaContent();
