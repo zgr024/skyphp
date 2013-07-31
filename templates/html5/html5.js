@@ -157,7 +157,8 @@ $(function(){
     });
 
 
-    $('a[skybox]').on('click', function() {
+    $('a[skybox]').on('click', function(e) {
+		e.preventDefault();
         var $this = $(this),
             url = $this.attr('href'),
             w = $this.attr('skybox-width'),
