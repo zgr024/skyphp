@@ -22,8 +22,7 @@ if ( $template_area == 'top' ) {
 <!--[if IE 9 ]>    <html <?=$attrs?> lang="en" class="no-js ie9"> <![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--> <html <?=$attrs?> lang="en" class="no-js"> <!--<![endif]-->
 <head>
-
-    <meta charset="UTF-8" />
+	<meta http-equiv="Content-Type" content="text/html;charset=<?=$this->charset?$this->charset:'UTF-8'?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
     <title><?=$this->title?></title>
@@ -105,10 +104,10 @@ if ( $template_area == 'top' ) {
 <script> DD_belatedPNG.fix('img, .png_bg');</script>
 <![endif]-->
 <?php
-    if ( $google_analytics_account ) {
+    if ( $this->google_analytics_account ) {
 ?>
 <script>
-    var _gaq=[['_setAccount','<?=$google_analytics_account?>'],['_trackPageview']]; // Change UA-XXXXX-X to be your site's ID
+    var _gaq=[['_setAccount','<?=$this->google_analytics_account?>'],['_trackPageview']]; // Change UA-XXXXX-X to be your site's ID
     (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
     g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
     s.parentNode.insertBefore(g,s)}(document,'script'));
