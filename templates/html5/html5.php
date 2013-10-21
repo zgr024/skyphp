@@ -105,6 +105,7 @@ if ( $template_area == 'top' ) {
 <![endif]-->
 <?php
     if ( $this->google_analytics_account ) {
+		if ($_GET['debug_gaa']) print_r($this);
 ?>
 <script>
     var _gaq=[['_setAccount','<?=$this->google_analytics_account?>'],['_trackPageview']]; // Change UA-XXXXX-X to be your site's ID
