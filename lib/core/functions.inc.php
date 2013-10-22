@@ -2034,11 +2034,17 @@ function getMimeTypes()
         'jar' => 'application/java-archive',
 
         // multimedia
-        'mp3' => 'audio/mpeg',
+		'mp3' => 'audio/mpeg',
+		'wav' => 'audio/vnd.wav',
+		'oga' => 'audio/vorbis',
+		'ogv' => 'video/ogg',
+		'ogg' => 'video/ogg',
+		'webm' => 'video/webm',
         'qt' => 'video/quicktime',
         'mov' => 'video/quicktime',
         'flv' => 'video/x-flv',
         'swf' => 'application/x-shockwave-flash',
+		
 
         // adobe
         'pdf' => 'application/pdf',
