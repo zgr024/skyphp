@@ -103,6 +103,9 @@ if ( $template_area == 'top' ) {
 <script> DD_belatedPNG.fix('img, .png_bg');</script>
 <![endif]-->
 <?php
+	if ($google_analytics_account && !$this->google_analytics_account) {
+		$this->google_analytics_account = $google_analytics_account;
+	}
     if ( $this->google_analytics_account ) {
 		if ($_GET['debug_gaa']) echo $this->google_analytics_account;
 ?>
