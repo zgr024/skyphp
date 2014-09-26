@@ -7,6 +7,4 @@ header("Retry-After: $seconds");
 
 <div style="text-align:center; font-size:24px;">
 	Sorry, this website is currently down for scheduled maintenance.
-    <br />
-    Please check back in about an hour.
 </div>
