@@ -1,8 +1,6 @@
-
+var pos = 'absolute';
 // skybox and ajax
 (function(window, undefined) {
-	
-	var pos = 'absolute';
 
     // set up globals
     window.firstStateChange = true;
@@ -412,8 +410,10 @@ $(function(){
         $div = $div || $(window);
 
         var $window = $(window),
+
             top = ( $window.height() - this.height() ) / 2 + $window.scrollTop(),
             left = ( $div.width() - this.width() ) / 2 + $div.scrollLeft();
+			console.log(top+','+left);
 
         top = (top < 5) ? 5 : top;
         left = (left < 5) ? 5 : left;
