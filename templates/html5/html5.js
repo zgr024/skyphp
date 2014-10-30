@@ -411,13 +411,19 @@ $(function(){
 
         var $window = $(window),
 
-            top = ( $window.height() - this.height() ) / 2 + $window.scrollTop(),
-            left = ( $div.width() - this.width() ) / 2 + $div.scrollLeft();
-			console.log(top+','+left);
+		top = ( $window.height() - this.height() ) / 2,
+		left = ( $div.width() - this.width() ) / 2;
 
-        top = (top < 5) ? 5 : top;
-        left = (left < 5) ? 5 : left;
+		if (pos == 'absolute') {
+			top += $window.scrollTop();
+			left += $div.scrollLeft();			
+		}
 
+		top = (top < 5) ? 5 : top;
+		left = (left < 5) ? 5 : left;
+
+		console.log(top);
+		
         return this.css({
             position: pos,
             top: top + 'px',
