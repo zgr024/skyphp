@@ -1,6 +1,8 @@
 
 // skybox and ajax
 (function(window, undefined) {
+	
+	var pos = 'absolute';
 
     // set up globals
     window.firstStateChange = true;
@@ -226,7 +228,7 @@ $(function(){
      *  skybox(url,post,width)
      *  skybox(url,post,width,height)
     **/
-    $.skybox = function(a,b,c,d) {
+    $.skybox = function(a,b,c,d,e) {
 
         var $skybox = $('#skybox'),
             skyboxURL = a,
@@ -236,10 +238,22 @@ $(function(){
             if (isNumeric(b)) {
                 w = b;
                 h = c;
-            } else {
+				if (d) post = d;
+            } 
+			else if (typeof b == 'string') {
+				pos=b;				
+			}
+			else {
                 post = b;
-                w = c;
-                h = d;
+				if (typeof c == 'string') {
+					pos = c;
+					w = d;
+					h = e;
+				}
+				else {
+					w = c;
+					h = d;
+				}
             }
         }
 
@@ -405,7 +419,7 @@ $(function(){
         left = (left < 5) ? 5 : left;
 
         return this.css({
-            position: 'absolute',
+            position: pos,
             top: top + 'px',
             left: left + 'px'
         });
