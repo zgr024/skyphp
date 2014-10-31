@@ -421,8 +421,6 @@ $(function(){
 
 		top = (top < 5) ? 5 : top;
 		left = (left < 5) ? 5 : left;
-
-		console.log(top);
 		
         return this.css({
             position: pos,
