@@ -238,12 +238,12 @@ $(function(){
                 h = c;
 				if (d) post = d;
             } 
-			else if (typeof b == 'string') {
+			else if ( Number.isNaN(b) && typeof b == 'string') {
 				pos=b;				
 			}
 			else {
                 post = b;
-				if (typeof c == 'string') {
+				if (Number.isNaN(c) && typeof c == 'string') {
 					pos = c;
 					w = d;
 					h = e;
@@ -414,9 +414,9 @@ $(function(){
 		top = ( $window.height() - this.height() ) / 2,
 		left = ( $div.width() - this.width() ) / 2;
 
-		if (pos == 'absolute') {
+		if (pos == 'absolute' || !Number.isNaN(pos)) {
 			top += $window.scrollTop();
-			left += $div.scrollLeft();			
+			left += $div.scrollLeft();		
 		}
 
 		top = (top < 5) ? 5 : top;
