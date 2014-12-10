@@ -238,12 +238,12 @@ $(function(){
                 h = c;
 				if (d) post = d;
             } 
-			else if ( Number.isNaN(b) && typeof b == 'string') {
+			else if (isNaN(parseInt(b)) && typeof b == 'string') {
 				pos=b;				
 			}
 			else {
                 post = b;
-				if (Number.isNaN(c) && typeof c == 'string') {
+				if (isNaN(parseInt(b)) && typeof c == 'string') {
 					pos = c;
 					w = d;
 					h = e;
