@@ -414,7 +414,7 @@ $(function(){
 		top = ( $window.height() - this.height() ) / 2,
 		left = ( $div.width() - this.width() ) / 2;
 
-		if (pos == 'absolute' || !Number.isNaN(pos)) {
+		if (pos == 'absolute' || !isNaN(pos)) {
 			top += $window.scrollTop();
 			left += $div.scrollLeft();		
 		}
