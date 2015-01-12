@@ -610,7 +610,7 @@ class aql
 				self::update($table,array('active'=>0),$id);
 			}
 			
-			return $duplicate;
+			return $duplicate[0];
 		}
 
         $e = new \Sky\AQL\TransactionException(
