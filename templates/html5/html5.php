@@ -45,9 +45,12 @@ if ( $template_area == 'top' ) {
 ?>
     <link rel="shortcut icon" href="<?=$this->favicon?>" />
     <link rel="apple-touch-icon" href="<?=$this->apple_touch_icon?>" />
+<?
+	if ($jquery_version) {
+?>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/<?=$jquery_version?>/jquery.min.js"></script>
     <script>!window.jQuery && document.write(unescape('%3Cscript src="/lib/js/jquery-<?=$jquery_version?>.min.js"%3E%3C/script%3E'))</script>
-
+<? } ?>
     <!--[if (lt IE 9) & (!IEMobile)]>
         <script src="/lib/js/jquery-extended-selectors.js"></script>
         <script src="/lib/js/selectivizr-min.js"></script>
