@@ -567,6 +567,67 @@ class aql
         return strpos(self::get_db_platform(), 'postgres') !== false;
     }
 
+	/**
+     * Duplicates a record in the database
+     * If in a transaction or silent, errors/exceptions will be added to self::$errors
+     * @param   string  $table
+     * @param   string  $id     id | ide
+	 * @param	bool    $deactivate	
+     * @param   Boolean $silent
+     * @return  Duplicate
+     * @throws  \Sky\AQL\Exception              if invalid ID
+     * @throws  \Sky\AQL\TransactionException  on update failure
+     */
+    public static function duplicate($table, $identifier, $deactivate=false, $silent = false)
+    {
+        if (!self::hasMasterDB()) {
+            return false;
+        }
+
+        if (self::in_transaction()) {
+            $silent = true;
+        }
+
+        $id = (is_numeric($identifier))
+            ? $identifier
+            : decrypt($identifier, $table);
+
+        if (!is_numeric($id) || !$id) {
+            throw new \Sky\AQL\Exception(
+                "Duplication Error: invalid identifier [{$identifier}] for table [{$table}]."
+            );
+        }
+
+        $dbw = self::getMasterDB();
+
+		$data = self::profile("$table { * }",$id);
+		unset($data['id']);
+		$duplicate = self::insert($table,$data);
+		
+		if ($duplicate[0][$table.'_ide']) {
+
+			if ($deactivate === true) {
+				self::update($table,array('active'=>0),$id);
+			}
+			
+			return $duplicate[0];
+		}
+
+        $e = new \Sky\AQL\TransactionException(
+            $table,
+            $id,
+            $dbw
+        );
+
+        if ($silent) {
+            $e->sendErrorEmail();
+            aql::$errors[] = $e;
+        } else {
+            throw $e;
+        }
+
+    }
+
     /**
      * Updates a record in the database
      * If in a transaction or silent, errors/exceptions will be added to self::$errors

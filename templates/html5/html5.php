@@ -26,7 +26,7 @@ if ( $template_area == 'top' ) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
     <title><?=$this->title?></title>
-    <meta meta name="viewport" content="<?=$this->viewport?$this->viewport:'initial-scale=0.4, width=500'?>" />
+    <meta name="viewport" content="<?=$this->viewport?$this->viewport:'initial-scale=0.4, width=500'?>" />
 <?php
 
     $meta_content = $this->seoMetaContent();
@@ -45,9 +45,12 @@ if ( $template_area == 'top' ) {
 ?>
     <link rel="shortcut icon" href="<?=$this->favicon?>" />
     <link rel="apple-touch-icon" href="<?=$this->apple_touch_icon?>" />
+<?
+	if ($jquery_version) {
+?>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/<?=$jquery_version?>/jquery.min.js"></script>
     <script>!window.jQuery && document.write(unescape('%3Cscript src="/lib/js/jquery-<?=$jquery_version?>.min.js"%3E%3C/script%3E'))</script>
-
+<? } ?>
     <!--[if (lt IE 9) & (!IEMobile)]>
         <script src="/lib/js/jquery-extended-selectors.js"></script>
         <script src="/lib/js/selectivizr-min.js"></script>
