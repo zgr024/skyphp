@@ -1946,12 +1946,13 @@ class auth {
 		// new method
 		$perms = explode(';',$params);
 		foreach($perms as $perm){
-			list($group, $granted) = explode(':',$perm);
+			list($group, $granted) = explode(':',trim($perm));
 
 			if (empty($group)) return false;
 			if (empty($key[$group])) $key[$group] = md5($group.$person_id);
 
 			if (empty($access[$key[$group]])&&!empty($person_id)) {
+
 				$rs = aql::select(" {$group} { id, access_group } ", array(
 						'where' => array(0=>(($group!='person')?'person_':'').'id='.$person_id),
 						'limit' => 1 ));
