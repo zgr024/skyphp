@@ -776,162 +776,13 @@ function collection( $model, $clause, $duration=null ) {
  * @param string $access_group...
  * @return boolean returns true if the user is granted access to one or more of the specified access_groups, otherwise returns false
  */
-	function auth() {
-		for ($i=0; $i < func_num_args(); $i++) {
-
-			$arg = func_get_arg($i);
-
-			$person_id = $_SESSION['login']['person_id'];
-
-			if ( !$person_id ) return false;
-			if ( !$arg ) return true;
-
-			// new method -- check the appropriate keytable on demand
-			if ( strpos($arg,':') ):
-
-				return auth_person($arg, $person_id);
-
-			// old method -- for backwards compatibility -- check the session for the desired access group (person.access_group)
-			else:
-                $arr = explode(',',$arg);
-                foreach ($arr as $arg):
-                    if ( strpos(strtolower($_SESSION['login']['access_group']),strtolower($arg)) !== false ):
-                        return true;
-                    endif;
-                endforeach;
-			endif;
-
-		}//for
-		return false;
-	}//function
-
-	/**
-
-		will return an auth function that uses those contraints
-
-		value arguments for now only accept ['constant']
-
-		KEYS MUST BE SET
-
-		constraints = array(
-			'arg1' => $vars, // check contants
-			'arg2' => $vars // dont check for constant
-		);
-	*/
-
-	function makeAuthFn($constraints) {
-
-		static $results = array();
-
-		if (!is_assoc($constraints)) {
-			throw new Exception('constraints needs to be an associative array');
-		}
-
-		$constraint_hash = md5(serialize($constraints));
-
-		$trim_to_lower = function($str) {
-			return trim(strtolower($str));
-		};
-
-		return function($access_level_str, $params = null) use($constraints, $constraint_hash, $trim_to_lower, &$results) {
-
-			// set key for this auth_function if it doesnt exist
-			if (!array_key_exists($constraint_hash, $results)) {
-				$results[$constraint_hash] = array();
-			}
-
-			// make sure parms is an array regardless of what's given.
-			if (count($constraints) == 1) {
-				if (!is_array($params)) {
-					$params = array( reset(array_keys($constraints)) => $params);
-				}
-			}
-
-			// generate where, look for constants if check_for_constant is true and the params are not defined
-			// return false if it isn't set, exit early
-			$where = array();
-			foreach ($constraints as $constraint => $vars) {
-				if (!$params[$constraint]) {
-					if (!$vars['constant']) return false;
-					if (defined($vars['constant'])) {
-						$params[$constraint] = constant($vars['constant']);
-					}
-					if (!$params[$constraint]) return false;
-				}
-				$where[] = "{$constraint} = {$params[$constraint]}";
-			}
-
-			// make hash
-			$param_hash = md5(sprintf('%s:::%s', $access_level_str, serialize($params)));
-
-			// if this has been computed for this page return the result
-			if (array_key_exists($param_hash, $results[$constraint_hash])) {
-				return $results[$constraint_hash][$param_hash];
-			}
-
-			$allowed = false;
-			$access_level_arr = explode(';', $access_level_str);
-
-			foreach ($access_level_arr as $access_level) {
-
-				$access = array_map($trim_to_lower, explode(':', $access_level, 2));
-				$key_table = $access[0];
-
-				if (!$key_table) continue;
-
-				$access_needed_arr = my_array_unique(
-					array_map($trim_to_lower,
-						explode(',', $access[1])
-					)
-				);
-
-				if ($access_needed_arr[0] == '*') {
-					$access_needed_arr = array();
-				}
-
-				$aql = 	" $key_table { id, access_group } ";
-				$rs = aql::select($aql, array(
-					'where' => $where,
-					'limit' => 1
-				));
-
-				if (!$rs) continue;
-
-				if (!$access_needed_arr) {
-					$allowed = true;
-					break;
-				}
-
-				$granted = array_map($trim_to_lower, explode(',', $rs[0]['access_group']));
-				foreach ($access_needed_arr as $needed) {
-					if (in_array($needed, $granted)) {
-						$allowed = true;
-						break 2; // break out of both loops if a match is found
-					}
-				}
-
-			}
-
-			// return and store value
-			return $results[$constraint_hash][$param_hash] = $allowed;
-
-		};
-
+	function auth($params=null) {
+		return auth::permission($params);
 	}
 
-	function auth_person( $access_level_str, $person_id=NULL ) {
-
-		if (!$person_id) $person_id = $_SESSION['login']['person_id'];
-		if (strpos($access_level_str,'person:') !== false) $idField = 'id';
-		else $idField = 'person_id';
-		$auth_fn = makeAuthFn(array(
-			$idField=> array(
-				'constant' => 'PERSON_ID'
-			)
-		));
-		return $auth_fn($access_level_str, $person_id);
-
-	}//auth_person
+	function auth_person($access_level_str, $person_id=null) {
+		return auth::permission($access_level_str, $person_id);
+	}
 
 
     function login_person($person,$remember_me) {
@@ -2065,4 +1916,60 @@ function getMimeTypes()
         'odt' => 'application/vnd.oasis.opendocument.text',
         'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
     );
+}
+
+class auth {
+	/**
+	 * auth class
+	 * 
+	 * Organization: Hotwire Communications
+	 * Author: Harley Fischel
+	*/
+	public static function permission($params=null, $person_id=null) {
+		$params = trim($params);
+		if (empty($params)) return false;
+		if (empty($person_id)&&isset($_SESSION['login']['person_id'])) {
+			$person_id = $_SESSION['login']['person_id'];
+		}
+
+		// old method support
+		if (!strpos($params,':')) {
+            $arr = explode(',',$params);
+            foreach ($arr as $arg) {
+                if (strpos(strtolower($_SESSION['login']['access_group']),strtolower($arg))!==false) return true;
+			}
+			return false;
+		}
+
+		static $access, $key;
+
+		// new method
+		$perms = explode(';',$params);
+		foreach($perms as $perm){
+			list($group, $granted) = explode(':',$perm);
+
+			if (empty($group)) return false;
+			if (empty($key[$group])) $key[$group] = md5($group.$person_id);
+
+			if (empty($access[$key[$group]])&&!empty($person_id)) {
+				$rs = aql::select(" {$group} { id, access_group } ", array(
+						'where' => array(0=>(($group!='person')?'person_':'').'id='.$person_id),
+						'limit' => 1 ));
+				$access[$key[$group]] = array_map(function($str) {
+					return md5(trim(strtolower($str)));
+				}, explode(',', $rs[0]['access_group']));
+			// un-comment to see access array
+//			echo "<pre>md5:\n".print_r($access,true)."</pre>";
+			}
+
+			if ($granted=='*') return true;
+
+			if (is_array($access[$key[$group]])) {
+				if (in_array(md5($granted), $access[$key[$group]])) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }
