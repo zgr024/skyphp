@@ -485,8 +485,9 @@ class aql
         unset($fields['id']);
         foreach ($fields as $k => $v) {
             if ($v === null || $v === '') {
-                unset($fields[$k]);
+                unset($fields[$k]); continue;
             }
+            $fields[$k] = trim($v);
         }
 
         if (!$fields) {
@@ -662,6 +663,8 @@ class aql
         if (!is_array($fields) || !$fields) {
             return false;
         }
+
+        foreach ($fields as $k => $v) { $fields[$k] = trim($v); }
 
         $dbw = self::getMasterDB();
         $result = $dbw->AutoExecute($table, $fields, 'UPDATE', 'id = ' . $id);
@@ -1068,7 +1071,9 @@ class aql
         $select_type = ($settings['select_type']) ?: 'sql';
 
         $rs = array();
+        $microtime_start = microtime(true);
         $r = $db_conn->Execute($arr[$select_type]);
+		hwc_debug::add_aql($arr[$select_type], number_format(microtime(true) - $microtime_start,3));
 
         if ($r === false) {
 
@@ -1142,11 +1147,16 @@ class aql
                         );
 
                         if ($query) {
+                    // new getRecords method
+/*                          $ca = $s['constructor argument']; $p = new $m();
+                            $arr = array('ids'=>array_map(function($a) use ($ca) { return $a[$ca]; },$query));
+                            foreach($p->getRecords($arr) as $row){ $tmp[$k][]['_data'] = $row; }*/
+                  // old query loop method
                             foreach ($query as $row) {
                                 $arg = $row[$s['constructor argument']];
                                 $o = Model::get($m, $arg, $sub_do_set);
                                 $tmp[$k][] = ($object) ? $o : $o->dataToArray();
-                            }*/
+                            }
                         }
                     } else if (!$s['plural']) {
                         $arg = (int) $tmp[$s['constructor argument']];

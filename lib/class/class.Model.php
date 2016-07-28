@@ -324,6 +324,8 @@ class Model implements ArrayAccess
         list($aql, $force_db, $cnf) = $this->mapConstructArgs($aql, $force_db, $cnf);
 
         # initialize this model
+        $r = new ReflectionClass($this);
+        $this->_model_path = dirname($r->getFilename());
         $this->_model_name = get_class($this);
         $this->getModelAql($aql)->makeProperties();
 
@@ -338,6 +340,41 @@ class Model implements ArrayAccess
         $this->checkConstructorData($data, $force_db);
     }
 
+    /**
+     * returns sql query results
+     *
+     * @param array $a    array of ids to return records on
+     *
+     */
+/*	public function getRecords($a) {
+            $aql_array = null;
+            if(file_exists($this->_model_path.'/'.$this->_model_name.'.aql')){
+                $set_joins = ((isset($a['joins']))?false:true);
+                $set_columns = ((isset($a['columns']))?false:true);
+
+                $a['primary_id'] = $this->_primary_table.'.id';
+                $a['columns'][] = $this->_primary_table.".id as ".$this->_primary_table."_id";
+
+                $aql = file_get_contents($this->_model_path.'/'.$this->_model_name.'.aql');
+                $aql_array = aql2array($aql);
+
+                foreach($aql_array as $table => $array){
+                    if($set_joins){
+                        if(isset($array['on'])){
+                            $a['joins'][] = "LEFT JOIN ".$array['table'].(($array['table']!=$table)?' '.$table:'')." ON ".$array['on'];
+                        }
+                    }
+                    if($set_columns){
+                        foreach($array['fields'] as $key => $link){
+                                $a['columns'][] = $link." as ".(($key=='id')?$array['table']."_":'').$key;
+                        }
+                    }
+                }
+            }
+			$sql = "SELECT ".join(",",$a['columns'])." FROM ".$this->_primary_table." ".join(" ",$a['joins'])." WHERE ".$a['primary_id']." IN ('".join("','",$a['ids'])."')".((isset($a['order_by']))?' ORDER BY '.$a['order_by']:" ORDER BY FIELD(".$a['primary_id'].", '".join("','",$a['ids'])."')");
+			$results = sql($sql);
+            return $results;
+	}*/
 
     /**
      * checks for a proper identifier, loads object if set runs construct()
