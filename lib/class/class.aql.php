@@ -1148,12 +1148,13 @@ class aql
 
                         if ($query) {
                     // new getRecords method
-                          $ca = $s['constructor argument']; $p = new $m();
+ /*                         $ca = $s['constructor argument']; $p = new $m();
                             $arr = array('ids'=>array_map(function($a) use ($ca) { return $a[$ca]; },$query));
                             foreach($p->getRecords($arr) as $row){ $tmp[$k][]['_data'] = $row; }
-                  // old query loop method
-/*                            foreach ($query as $row) {
+*/                  // old query loop method
+                            foreach ($query as $row) {
                                 $arg = $row[$s['constructor argument']];
+                                echo "<pre>".$object.": ".print_r(Model::get($m, $arg, $sub_do_set),true)."</pre>";
                                 $o = Model::get($m, $arg, $sub_do_set);
                                 $tmp[$k][] = ($object) ? $o : $o->dataToArray();
                             }*/
@@ -1167,7 +1168,17 @@ class aql
                     }
                 }
             }
+    // I have a query:
 
+$query = array('0'=>array('c1'=>'some value 1','c2'=>'some value 2'),
+               '1'=>array('c1'=>'some value 3','c2'=>'some value 4'));
+
+               
+    // and i just want 'c1' values returned to an array.
+$ca = 'c1';
+$c1 = array_map(function($a) use ($ca) { return $a[$ca]; },$query)
+    // $c1 equals:
+ array('some value 1', 'some value 3');
             if ($object && $aql_statement) {
 
                 $tmp_model = ($object === true)
