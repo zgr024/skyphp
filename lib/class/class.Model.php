@@ -343,10 +343,10 @@ class Model implements ArrayAccess
     /**
      * returns sql query results
      *
-     * @param array $a    id array of ids to return records on
+     * @param array $a    array of ids to return records on
      *
      */
-	public function getRecords($a) {
+/*	public function getRecords($a) {
             $aql_array = null;
             if(file_exists($this->_model_path.'/'.$this->_model_name.'.aql')){
                 $set_joins = ((isset($a['joins']))?false:true);
@@ -374,7 +374,7 @@ class Model implements ArrayAccess
 			$sql = "SELECT ".join(",",$a['columns'])." FROM ".$this->_primary_table." ".join(" ",$a['joins'])." WHERE ".$a['primary_id']." IN ('".join("','",$a['ids'])."')".((isset($a['order_by']))?' ORDER BY '.$a['order_by']:" ORDER BY FIELD(".$a['primary_id'].", '".join("','",$a['ids'])."')");
 			$results = sql($sql);
             return $results;
-	}
+	}*/
 
     /**
      * checks for a proper identifier, loads object if set runs construct()
