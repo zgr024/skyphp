@@ -1148,15 +1148,15 @@ class aql
 
                         if ($query) {
                     // new getRecords method
-/*                          $ca = $s['constructor argument']; $p = new $m();
+                            $ca = $s['constructor argument']; $p = new $m();
                             $arr = array('ids'=>array_map(function($a) use ($ca) { return $a[$ca]; },$query));
-                            foreach($p->getRecords($arr) as $row){ $tmp[$k][]['_data'] = $row; }*/
+                            foreach($p->getRecords($arr) as $row){ $tmp[$k][]['_data'] = $row; }
                   // old query loop method
-                            foreach ($query as $row) {
+/*                            foreach ($query as $row) {
                                 $arg = $row[$s['constructor argument']];
                                 $o = Model::get($m, $arg, $sub_do_set);
                                 $tmp[$k][] = ($object) ? $o : $o->dataToArray();
-                            }
+                            }*/
                         }
                     } else if (!$s['plural']) {
                         $arg = (int) $tmp[$s['constructor argument']];
