@@ -1073,7 +1073,9 @@ class aql
         $rs = array();
         $microtime_start = microtime(true);
         $r = $db_conn->Execute($arr[$select_type]);
-		hwc_debug::add_aql($arr[$select_type], number_format(microtime(true) - $microtime_start,3));
+        if(class_exists('hwc_debug')){
+            hwc_debug::add_aql($arr[$select_type], number_format(microtime(true) - $microtime_start,3));
+        }
 
         if ($r === false) {
 
