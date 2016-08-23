@@ -371,8 +371,9 @@ class Model implements ArrayAccess
                     }
                 }
             }
-			$sql = "SELECT ".join(",",$a['columns'])." FROM ".$this->_primary_table." ".join(" ",$a['joins'])." WHERE ".$a['primary_id']." IN ('".join("','",$a['ids'])."')".((isset($a['order_by']))?' ORDER BY '.$a['order_by']:" ORDER BY FIELD(".$a['primary_id'].", '".join("','",$a['ids'])."')");
-			$results = sql($sql);
+			$sql = "SELECT ".((!empty($a['columns']))?join(",",$a['columns']):'*')." FROM ".$this->_primary_table." ".((!empty($a['joins']))?join(" ",$a['joins']):'')." WHERE ".$a['primary_id']." IN ('".((!empty($a['ids']))?join("','",$a['ids']):'')."')".((isset($a['order_by']))?' ORDER BY '.$a['order_by']:" ORDER BY FIELD(".$a['primary_id'].", '".((!empty($a['ids']))?join("','",$a['ids']):'')."')");
+			$results = sql_array($sql);
+            foreach($results as $k=>$r){ $results[$k][$this->_primary_table.'_ide'] = encrypt($r[$this->_primary_table.'_id'],$this->_primary_table); }
             return $results;
 	}
 
