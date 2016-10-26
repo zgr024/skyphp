@@ -664,7 +664,7 @@ class aql
             return false;
         }
 
-        foreach ($fields as $k => $v) { $fields[$k] = trim($v); }
+        foreach ($fields as $k => $v) { $fields[$k] = trim($v); } //($v=='-0001-11-30'?NULL:trim($v)); }
 
         $dbw = self::getMasterDB();
         $result = $dbw->AutoExecute($table, $fields, 'UPDATE', 'id = ' . $id);
