@@ -1886,17 +1886,21 @@ function getMimeTypes()
         'class' => 'application/java-vm',
         'jar' => 'application/java-archive',
 
-        // multimedia
-		'mp3' => 'audio/mpeg',
-		'wav' => 'audio/vnd.wav',
-		'oga' => 'audio/vorbis',
-		'ogv' => 'video/ogg',
-		'ogg' => 'video/ogg',
-		'webm' => 'video/webm',
+        // audio
+        'mp3' => 'audio/mpeg',
+        'wav' => 'audio/vnd.wav',
+        'oga' => 'audio/vorbis',
+        
+        // video
+        'ogv' => 'video/ogg',
+        'ogg' => 'video/ogg',
+        'webm' => 'video/webm',
         'qt' => 'video/quicktime',
         'mov' => 'video/quicktime',
         'flv' => 'video/x-flv',
         'swf' => 'application/x-shockwave-flash',
+        'mp4' => 'video/mp4',
+        'mpg' => 'video/mpeg',
 		
 
         // adobe
