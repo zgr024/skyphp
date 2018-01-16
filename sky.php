@@ -47,8 +47,16 @@ $uri =  call_user_func(function($t) {
 if(strpos($uri["path"], "'") !== FALSE)
 {
 	redirect("/");
-	// The code below is my alternative. Not sure which is better
-	// $uri["path"] = str_replace(array("'", "\""), "", $uri["path"]);
+	/* 
+	The code below is my alternative. Not sure which is better:
+	
+	redirect("/");
+	die();
+	
+	OR
+	
+	$uri["path"] = str_replace(array("'", "\""), "", $uri["path"]); 
+	*/
 }
 
 # check if quick serve
