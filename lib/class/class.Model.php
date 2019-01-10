@@ -324,8 +324,11 @@ class Model implements ArrayAccess
         list($aql, $force_db, $cnf) = $this->mapConstructArgs($aql, $force_db, $cnf);
 
         # initialize this model
+        $r = new ReflectionClass($this);
+        $this->_model_path = dirname($r->getFilename());
         $this->_model_name = get_class($this);
         $this->getModelAql($aql)->makeProperties();
+        //$this->_token = $this->getToken();
 
         # set if we're refreshing it
         $this->_force_db = ($force_db || $_GET['refresh']);
@@ -338,6 +341,58 @@ class Model implements ArrayAccess
         $this->checkConstructorData($data, $force_db);
     }
 
+    /**
+     * returns sql query results
+     *
+     * @param array $a    array of ids to return records on
+     *
+     */
+	public function getRecords($a) {
+            $aql_array = null;
+            if(file_exists($this->_model_path.'/'.$this->_model_name.'.aql')){
+                $set_joins = ((isset($a['joins']))?false:true);
+                $set_columns = ((isset($a['columns']))?false:true);
+
+                $a['primary_id'] = $this->_primary_table.'.id';
+                $a['columns'][] = $this->_primary_table.".id as ".$this->_primary_table."_id";
+
+                $aql = file_get_contents($this->_model_path.'/'.$this->_model_name.'.aql');
+                $aql_array = aql2array($aql);
+                $tables = null; $ta = 'table';
+//echo "<pre>".print_r($aql_array,true)."</pre>";
+                foreach($aql_array as $table => $array){
+                    if($set_joins){
+                        if(isset($array['on'])){
+                            $a['joins'][] = "LEFT JOIN ".$array['table'].(($array['table']!=$table)?' '.$table:'')." ON ".$array['on'];
+                            $ta = ((isset($array['as']))?'as':'table');
+                            $a['columns'][] = $array[$ta].".id as ".$array[$ta]."_id";
+                            $tables[] = $array[$ta];
+                        }
+                    }
+                    if($set_columns){
+                        foreach($array['fields'] as $key => $link){
+                            if($this->_primary_table."_id"==$key) continue;
+                            $a['columns'][] = $link." as ".(($key=='id')?$array[$ta]."_":'').$key;
+                        }
+                    }
+                }
+            }
+			$sql = "SELECT ".((!empty($a['columns']))?join(",",$a['columns']):'*')." FROM ".$this->_primary_table." ".((!empty($a['joins']))?join(" ",$a['joins']):'')." WHERE ".$a['primary_id']." IN ('".((!empty($a['ids']))?join("','",$a['ids']):'')."')".((isset($a['order_by']))?' ORDER BY '.$a['order_by']:" ORDER BY FIELD(".$a['primary_id'].", '".((!empty($a['ids']))?join("','",$a['ids']):'')."')");
+            //echo $sql;
+			$results = sql_array($sql);
+            //echo "<pre>".print_r($results, true)."</pre>";
+            foreach($results as $k=>$r){
+                //$results[$k][$this->_primary_table.'_id'] = $r[$this->_primary_table.'_id'];
+                $results[$k][$this->_primary_table.'_ide'] = encrypt($r[$this->_primary_table.'_id'],$this->_primary_table);
+                if(isset($tables)){
+                    foreach($tables as $table){
+                        $results[$k][$table.'_ide'] = encrypt($results[$k][$table.'_id'],$table);
+                    }
+                }
+            }
+//            echo "<pre>".print_r($results, true)."</pre>";
+            return $results;
+	}
 
     /**
      * checks for a proper identifier, loads object if set runs construct()
@@ -1514,7 +1569,7 @@ class Model implements ArrayAccess
             $id = decrypt($id, $primary_table);
         }
         $id = ($id) ?: $this->getID();
-
+//echo "<pre>".print_r(array($primary_table,$id, self::_makeToken($id, $primary_table)),true)."</pre>";
         return self::_makeToken($id, $primary_table);
     }
 
