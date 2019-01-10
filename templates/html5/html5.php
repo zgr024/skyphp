@@ -26,7 +26,7 @@ if ( $template_area == 'top' ) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
     <title><?=$this->title?></title>
-    <meta name="viewport" content="<?=$this->viewport?$this->viewport:'initial-scale=0.4, width=500'?>" />
+    <meta name="viewport" content="<?=$this->viewport?$this->viewport:'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'?>" />
 <?php
 
     $meta_content = $this->seoMetaContent();
