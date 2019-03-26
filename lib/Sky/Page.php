@@ -54,7 +54,7 @@ class Page
     /**
      * @var string
      */
-    public $favicon = '/favicon.ico';
+    public $favicon = '/gethotwired-icon.png';
 
     /**
      * @var string

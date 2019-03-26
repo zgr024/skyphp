@@ -43,6 +43,22 @@ $uri =  call_user_func(function($t) {
             return array('path' => $t[0], 'query' => $t[1]);
         }, explode('?', $_SERVER['REQUEST_URI']));
 
+// If the url ends with a single quote, redirect back to main page 
+if(strpos($uri["path"], "'") !== FALSE)
+{
+	redirect("/");
+	/* 
+	The code below is my alternative. Not sure which is better:
+	
+	redirect("/");
+	die();
+	
+	OR
+	
+	$uri["path"] = str_replace(array("'", "\""), "", $uri["path"]); 
+	*/
+}
+
 # check if quick serve
 $check_paths = array(
     array('path' => null, 'is_file' => true),   # checks for exact file
